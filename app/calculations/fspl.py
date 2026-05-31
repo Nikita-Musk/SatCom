@@ -1,23 +1,29 @@
 import math
+from .constants import FSPL_CONSTANT
+from ..validation.validators import validate_positive_finite
+
 
 def calculate_fspl(
-        frequency_hz: float,
-        distanse_m: float
+    frequency_ghz: float,
+    distance_km: float,
 ) -> float:
     """
-    Расчёт затухания в свободном пространстве (Free Space Path Loss).
-    
-    Аргументы:
-        frequency_hz: Частота в герцах (Гц).
-        distance_m: Дистанция в метрах (м).
-    
-    Возвращает:
-        Затухание в децибелах (дБ).
+    Calculate Free Space Path Loss (FSPL).
+
+    Args:
+        frequency_ghz: Signal frequency in GHz. Must be > 0.
+        distance_km: Link distance in kilometers. Must be > 0.
+
+    Returns:
+        Free space path loss in dB (always positive).
+
+    Raises:
+        ValueError: If frequency_ghz or distance_km are not positive finite numbers.
     """
-    
-    if distanse_m <= 0 or frequency_hz <= 0:
-        raise ValueError("Дистанция и частота должны быть положительными")
+    validate_positive_finite(frequency_ghz=frequency_ghz, distance_km=distance_km)
 
     return (
-        20 * math.log10(frequency_hz) + 20 * math.log10(distanse_m) - 147.55
+        FSPL_CONSTANT
+        + 20 * math.log10(frequency_ghz)
+        + 20 * math.log10(distance_km)
     )
